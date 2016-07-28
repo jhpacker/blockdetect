@@ -1,0 +1,30 @@
+<!-- include in the footer of your HTML document, also requires jquery -->
+<!-- fingerprintjs2 from: https://github.com/Valve/fingerprintjs2 -->
+<script src="http://cdn.jsdelivr.net/fingerprintjs2/1.0/fingerprint2.min.js"></script>
+<script>
+// these variables we pass to ssmp are the minimal stuff
+// we need to ID users and are only available on original page
+// creation, not from ssmp.php
+var screenColors =  screen.colorDepth + '-bit';
+var screenResolution = screen.width + 'x' + screen.height;
+var viewportSize = document.documentElement.clientWidth + 'x' + document.documentElement.clientHeight;
+var referrer = document.referrer;
+
+var fp = new Fingerprint2();
+fp.get(function(result){
+    // callback from fingerprint process does AJAX post via jQuery to PHP GA proxy
+    // returns GA tracker code that gets eval'd as script
+    var browserid = result;
+    jQuery.post("/ssmp.php",
+   {
+               screenColors: screenColors,
+               screenResolution: screenResolution,
+               viewportSize: viewportSize,
+               browserid: browserid,
+               referrer: referrer
+   },
+   null,
+   "script"
+    );
+});
+</script>
